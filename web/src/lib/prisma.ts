@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeonHTTP } from "@prisma/adapter-neon";
+import { neon } from "@neondatabase/serverless";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -33,7 +35,6 @@ export function sanitizeDatabaseUrl(raw: string): string {
   if (url.hostname.includes("-pooler") && !next.has("pgbouncer")) {
     next.set("pgbouncer", "true");
   }
-  if (!next.has("connection_limit")) next.set("connection_limit", "1");
 
   url.search = next.toString();
   return url.toString();
@@ -46,10 +47,19 @@ function createPrismaClient() {
   }
 
   const url = sanitizeDatabaseUrl(raw);
-  // PrismaClient reads DATABASE_URL from env; override for this process.
   process.env.DATABASE_URL = url;
   if (process.env.DIRECT_URL) {
     process.env.DIRECT_URL = sanitizeDatabaseUrl(process.env.DIRECT_URL);
+  }
+
+  // Neon HTTP driver — Vercel에서 TCP :5432(P1001) 회피
+  if (url.includes("neon.tech")) {
+    const sql = neon(url);
+    const adapter = new PrismaNeonHTTP(sql);
+    return new PrismaClient({
+      adapter,
+      log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    });
   }
 
   return new PrismaClient({

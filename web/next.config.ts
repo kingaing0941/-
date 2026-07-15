@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["@prisma/client", "prisma"],
+  serverExternalPackages: [
+    "@prisma/client",
+    "prisma",
+    "@neondatabase/serverless",
+    "@prisma/adapter-neon",
+  ],
   async redirects() {
     return [
       { source: "/meal", destination: "/today", permanent: false },
