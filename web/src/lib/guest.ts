@@ -5,19 +5,27 @@ import { GUEST_COOKIE } from "@/lib/guest-cookie";
 export async function getGuestUser() {
   const jar = await cookies();
   const hdrs = await headers();
-  const id = jar.get(GUEST_COOKIE)?.value ?? hdrs.get("x-guest-id");
+  let id = jar.get(GUEST_COOKIE)?.value ?? hdrs.get("x-guest-id");
 
   if (!id) {
-    throw new Error("게스트 세션이 없습니다. 페이지를 새로고침해 주세요.");
+    id = crypto.randomUUID();
   }
 
-  const existing = await prisma.user.findUnique({ where: { id } });
-  if (existing) return existing;
+  try {
+    const existing = await prisma.user.findUnique({ where: { id } });
+    if (existing) return existing;
 
-  return prisma.user.create({
-    data: {
-      id,
-      name: null,
-    },
-  });
+    return await prisma.user.create({
+      data: {
+        id,
+        name: null,
+      },
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "데이터베이스 오류";
+    throw new Error(
+      `회원 정보를 불러오지 못했어요. DB 연결을 확인해 주세요. (${message})`,
+    );
+  }
 }
