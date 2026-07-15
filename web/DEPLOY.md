@@ -1,39 +1,30 @@
-# Neon + Vercel 연결 (P1001 해결)
+# Neon + Vercel 연결
 
-## 원인
+## Vercel 환경변수 (따옴표 없이 한 줄로)
 
-Neon이 잠들었다가 깨는 데 시간이 걸리는데, Prisma 기본 대기 시간(5초)이 짧아서
-`P1001: Can't reach database server` 가 납니다.
-또 빌드할 때 DB에 붙으려다 실패하면 배포 전체가 깨집니다.
+비밀번호만 본인 걸로 바꿔 넣으세요.
 
-## Vercel 환경변수 (2개)
-
-비밀번호는 Neon Connect에서 확인하세요.
-
-### DATABASE_URL (앱용 · pooler 필수)
-
+### DATABASE_URL
 ```text
-postgresql://neondb_owner:비밀번호@ep-snowy-dew-azyvquh4-pooler.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connect_timeout=15&pool_timeout=15&connection_limit=1
+postgresql://neondb_owner:비밀번호@ep-snowy-dew-azyvquh4-pooler.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connect_timeout=30&connection_limit=1
 ```
 
-### DIRECT_URL (스키마 작업용 · pooler 없음)
-
+### DIRECT_URL
 ```text
-postgresql://neondb_owner:비밀번호@ep-snowy-dew-azyvquh4.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&connect_timeout=15
+postgresql://neondb_owner:비밀번호@ep-snowy-dew-azyvquh4.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&connect_timeout=30
 ```
 
-둘 다 Production / Preview에 넣고 **Save → Redeploy**.
+주의:
+- 앞뒤에 `"` 따옴표 넣지 마세요
+- 줄바꿈/공백 넣지 마세요
+- Neon Connect에서 복사할 때 옵션을 이것저것 추가하지 말고, 위 형식만 쓰세요
 
-## 테이블 만들기 (최초 1회)
+### NEIS_API_KEY
+나이스 API 키
 
-1. Neon Console → SQL Editor
-2. `web/prisma/init.sql` 내용 붙여넣기 → Run
+## 테이블 (최초 1회)
+Neon → SQL Editor → `web/prisma/init.sql` 실행
 
-## 점검
-
-1. Neon 대시보드에서 프로젝트가 **Active**(초록)인지 확인. Idle이면 아무 쿼리나 한 번 실행해 깨우기
-2. https://geupsik-ashy.vercel.app/api/health
-3. `{"ok":true,"db":"connected"}` 나오면 닉네임 설정 다시 시도
-
-공식 주소는 `geupsik-ashy.vercel.app` 를 쓰세요.
-`geupsik-git-main-...` 는 미리보기 배포라 실패했을 수 있습니다.
+## 확인
+https://geupsik-ashy.vercel.app/api/health
+`{"ok":true}` 이면 성공

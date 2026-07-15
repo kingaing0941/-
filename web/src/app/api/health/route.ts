@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, sanitizeDatabaseUrl } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -16,7 +16,9 @@ export async function GET() {
       );
     }
 
-    await prisma.$queryRaw`SELECT 1`;
+    // Validate URL shape early (throws if malformed)
+    sanitizeDatabaseUrl(process.env.DATABASE_URL);
+
     const userCount = await prisma.user.count();
 
     return NextResponse.json({
@@ -24,6 +26,7 @@ export async function GET() {
       db: "connected",
       userCount,
       neon: process.env.DATABASE_URL.includes("neon.tech"),
+      pooler: process.env.DATABASE_URL.includes("-pooler"),
     });
   } catch (error) {
     return NextResponse.json(
