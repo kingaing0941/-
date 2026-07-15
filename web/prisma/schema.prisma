@@ -1,0 +1,42 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  name       String?
+  email      String?  @unique
+  image      String?
+  officeCode String?
+  schoolCode String?
+  schoolName String?
+  xp         Int      @default(0)
+  level      Int      @default(1)
+  reviews    Review[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  officeCode String
+  schoolCode String
+  schoolName String
+  mealDate   String
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, schoolCode, mealDate])
+  @@index([userId])
+  @@index([mealDate])
+}

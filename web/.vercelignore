@@ -1,0 +1,6 @@
+.dev.db
+*.db
+*.db-journal
+README.md
+AGENTS.md
+CLAUDE.md
