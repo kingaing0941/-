@@ -237,6 +237,9 @@ export function ProfilePanel() {
                               <strong>{formatMealDate(review.mealDate)}</strong>
                               <StarRating value={review.rating} readOnly size="sm" />
                             </div>
+                            <p className="visibility-badge">
+                              {review.isPublic ? "공개" : "비공개"}
+                            </p>
                             <p>{review.comment}</p>
                             <span className="review-hint">탭해서 수정 · 삭제</span>
                           </button>
@@ -251,13 +254,25 @@ export function ProfilePanel() {
         )}
       </div>
 
-      <Link
-        href={routes.schools}
-        className="ghost-btn"
-        style={{ display: "block", textAlign: "center" }}
-      >
-        학교 변경
-      </Link>
+      <div className="profile-actions">
+        <Link
+          href={routes.schools}
+          className="ghost-btn"
+          style={{ display: "block", textAlign: "center" }}
+        >
+          학교 변경
+        </Link>
+        <button
+          type="button"
+          className="ghost-btn"
+          onClick={async () => {
+            await fetch("/api/logout", { method: "POST" });
+            window.location.href = routes.home;
+          }}
+        >
+          로그아웃
+        </button>
+      </div>
 
       {selected ? (
         <ReviewEditor

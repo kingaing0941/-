@@ -61,7 +61,7 @@ textarea {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: 0 16px 88px;
+  padding: 0 22px 88px;
 }
 
 .app-header {
@@ -72,7 +72,7 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 0 12px;
+  padding: 16px 6px 12px;
   backdrop-filter: blur(10px);
   background: linear-gradient(180deg, rgba(232, 243, 239, 0.92), rgba(232, 243, 239, 0.65));
 }
@@ -144,6 +144,10 @@ textarea {
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
+}
+
+.bottom-nav-4 {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .nav-item {
@@ -256,6 +260,93 @@ textarea {
 .school-item span {
   color: var(--ink-soft);
   font-size: 0.85rem;
+}
+
+.school-rating {
+  color: var(--teal-deep) !important;
+  font-weight: 600;
+}
+
+.visibility-field {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 12px 0 16px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.visibility-field legend {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.radio-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 8px 0;
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.visibility-badge {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--teal-deep);
+}
+
+.school-stat-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  display: grid;
+  gap: 4px;
+}
+
+.school-stat-card span {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.explore-schools,
+.explore-reviews {
+  margin-top: 18px;
+}
+
+.explore-schools h2,
+.explore-reviews h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.explore-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+a.google-btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.profile-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.profile-actions .ghost-btn {
+  margin-top: 0;
 }
 
 .current-school {
@@ -434,6 +525,14 @@ textarea {
   text-align: center;
   backdrop-filter: blur(10px);
   animation: rise 0.55s ease both;
+}
+
+.landing-card-compact {
+  padding: 40px 24px 28px;
+}
+
+.landing-card-compact .landing-brand {
+  margin: 0 0 28px;
 }
 
 .welcome-card .field {

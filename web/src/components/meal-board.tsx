@@ -18,6 +18,7 @@ type Review = {
   rating: number;
   comment: string;
   mealDate: string;
+  isPublic: boolean;
 };
 
 export function MealBoard({ initialDate }: { initialDate?: string }) {
@@ -28,6 +29,7 @@ export function MealBoard({ initialDate }: { initialDate?: string }) {
   const [review, setReview] = useState<Review | null>(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -48,6 +50,7 @@ export function MealBoard({ initialDate }: { initialDate?: string }) {
         setReview(data.review ?? null);
         setRating(data.review?.rating ?? 0);
         setComment(data.review?.comment ?? "");
+        setIsPublic(data.review?.isPublic ?? true);
       })
       .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
@@ -65,7 +68,7 @@ export function MealBoard({ initialDate }: { initialDate?: string }) {
       const res = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mealDate: date, rating, comment }),
+        body: JSON.stringify({ mealDate: date, rating, comment, isPublic }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -150,6 +153,28 @@ export function MealBoard({ initialDate }: { initialDate?: string }) {
               placeholder="오늘 급식은 어땠나요?"
             />
           </label>
+
+          <fieldset className="visibility-field">
+            <legend>공개 설정</legend>
+            <label className="radio-row">
+              <input
+                type="radio"
+                name="visibility"
+                checked={isPublic}
+                onChange={() => setIsPublic(true)}
+              />
+              <span>공개 — 다른 사람도 볼 수 있어요</span>
+            </label>
+            <label className="radio-row">
+              <input
+                type="radio"
+                name="visibility"
+                checked={!isPublic}
+                onChange={() => setIsPublic(false)}
+              />
+              <span>비공개 — 나만 볼 수 있어요</span>
+            </label>
+          </fieldset>
 
           <button
             type="button"

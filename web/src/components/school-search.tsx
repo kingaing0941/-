@@ -10,6 +10,8 @@ type School = {
   schoolName: string;
   region: string;
   address: string;
+  averageRating: number | null;
+  reviewCount: number;
 };
 
 export function SchoolSearch({ currentSchool }: { currentSchool?: string | null }) {
@@ -54,7 +56,11 @@ export function SchoolSearch({ currentSchool }: { currentSchool?: string | null 
       const res = await fetch("/api/schools/select", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(school),
+        body: JSON.stringify({
+          officeCode: school.officeCode,
+          schoolCode: school.schoolCode,
+          schoolName: school.schoolName,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -70,7 +76,7 @@ export function SchoolSearch({ currentSchool }: { currentSchool?: string | null 
     <section className="panel">
       <h1 className="page-title">학교 선택</h1>
       <p className="page-lead">
-        학교 이름을 검색한 뒤 선택하면, 해당 학교 급식을 볼 수 있어요.
+        학교를 검색하면 공개 리뷰 기준 평균 별점도 함께 보여 줘요.
       </p>
 
       {currentSchool ? (
@@ -103,6 +109,11 @@ export function SchoolSearch({ currentSchool }: { currentSchool?: string | null 
               <span>
                 {school.region}
                 {school.address ? ` · ${school.address}` : ""}
+              </span>
+              <span className="school-rating">
+                {school.reviewCount > 0 && school.averageRating != null
+                  ? `평균 ★ ${school.averageRating} · 공개 리뷰 ${school.reviewCount}개`
+                  : "아직 공개 리뷰 없음"}
               </span>
             </button>
           </li>

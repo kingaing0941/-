@@ -4,4 +4,5 @@ export const routes = {
   today: "/today",
   schools: "/schools",
   me: "/me",
+  explore: "/explore",
 } as const;

@@ -10,6 +10,7 @@ export type EditableReview = {
   rating: number;
   comment: string;
   schoolName: string;
+  isPublic: boolean;
 };
 
 export function ReviewEditor({
@@ -25,12 +26,14 @@ export function ReviewEditor({
 }) {
   const [rating, setRating] = useState(review.rating);
   const [comment, setComment] = useState(review.comment);
+  const [isPublic, setIsPublic] = useState(review.isPublic);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
     setRating(review.rating);
     setComment(review.comment);
+    setIsPublic(review.isPublic);
     setError("");
   }, [review]);
 
@@ -48,7 +51,7 @@ export function ReviewEditor({
       const res = await fetch(`/api/reviews/${review.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating, comment }),
+        body: JSON.stringify({ rating, comment, isPublic }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -59,6 +62,7 @@ export function ReviewEditor({
         ...review,
         rating: data.review.rating,
         comment: data.review.comment,
+        isPublic: data.review.isPublic,
       });
     });
   }
@@ -103,6 +107,28 @@ export function ReviewEditor({
             rows={3}
           />
         </label>
+
+        <fieldset className="visibility-field">
+          <legend>공개 설정</legend>
+          <label className="radio-row">
+            <input
+              type="radio"
+              name="edit-visibility"
+              checked={isPublic}
+              onChange={() => setIsPublic(true)}
+            />
+            <span>공개</span>
+          </label>
+          <label className="radio-row">
+            <input
+              type="radio"
+              name="edit-visibility"
+              checked={!isPublic}
+              onChange={() => setIsPublic(false)}
+            />
+            <span>비공개</span>
+          </label>
+        </fieldset>
 
         {error ? <p className="error">{error}</p> : null}
 

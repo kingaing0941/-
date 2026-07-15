@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 const updateSchema = z.object({
   rating: z.number().int().min(1).max(5),
   comment: z.string().trim().min(1).max(200),
+  isPublic: z.boolean(),
 });
 
 async function getOwnedReview(id: string) {

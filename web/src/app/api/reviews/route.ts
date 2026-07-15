@@ -9,6 +9,7 @@ const bodySchema = z.object({
   mealDate: z.string().min(8),
   rating: z.number().int().min(1).max(5),
   comment: z.string().trim().min(1).max(200),
+  isPublic: z.boolean().optional().default(true),
 });
 
 export async function POST(request: Request) {
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
       data: {
         rating: parsed.data.rating,
         comment: parsed.data.comment,
+        isPublic: parsed.data.isPublic,
       },
     });
 
@@ -77,6 +79,7 @@ export async function POST(request: Request) {
         mealDate,
         rating: parsed.data.rating,
         comment: parsed.data.comment,
+        isPublic: parsed.data.isPublic,
       },
     }),
     prisma.user.update({
