@@ -1,36 +1,39 @@
-# GitHub → Vercel 배포
+# Neon + Vercel 연결 (P1001 해결)
 
-## Neon DATABASE_URL (중요)
+## 원인
 
-Connect 화면에서:
+Neon이 잠들었다가 깨는 데 시간이 걸리는데, Prisma 기본 대기 시간(5초)이 짧아서
+`P1001: Can't reach database server` 가 납니다.
+또 빌드할 때 DB에 붙으려다 실패하면 배포 전체가 깨집니다.
 
-1. **Connection pooling** 켜기 (hostname에 `-pooler` 포함)
-2. 복사한 주소 끝에 아래가 없으면 추가:
+## Vercel 환경변수 (2개)
 
-```text
-?sslmode=require
-```
+비밀번호는 Neon Connect에서 확인하세요.
 
-이미 `?`가 있으면:
-
-```text
-&sslmode=require
-```
-
-예시:
+### DATABASE_URL (앱용 · pooler 필수)
 
 ```text
-postgresql://USER:PASSWORD@ep-xxxx-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+postgresql://neondb_owner:비밀번호@ep-snowy-dew-azyvquh4-pooler.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connect_timeout=15&pool_timeout=15&connection_limit=1
 ```
 
-Vercel Environment Variables:
+### DIRECT_URL (스키마 작업용 · pooler 없음)
 
-| Name | Value |
-|------|--------|
-| `DATABASE_URL` | 위 Neon pooled 주소 |
-| `NEIS_API_KEY` | 나이스 API 키 |
+```text
+postgresql://neondb_owner:비밀번호@ep-snowy-dew-azyvquh4.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&connect_timeout=15
+```
 
-Root Directory = `web`
+둘 다 Production / Preview에 넣고 **Save → Redeploy**.
 
-배포 후 점검: `https://사이트주소/api/health`  
-`{"ok":true,"db":"connected"}` 이면 정상입니다.
+## 테이블 만들기 (최초 1회)
+
+1. Neon Console → SQL Editor
+2. `web/prisma/init.sql` 내용 붙여넣기 → Run
+
+## 점검
+
+1. Neon 대시보드에서 프로젝트가 **Active**(초록)인지 확인. Idle이면 아무 쿼리나 한 번 실행해 깨우기
+2. https://geupsik-ashy.vercel.app/api/health
+3. `{"ok":true,"db":"connected"}` 나오면 닉네임 설정 다시 시도
+
+공식 주소는 `geupsik-ashy.vercel.app` 를 쓰세요.
+`geupsik-git-main-...` 는 미리보기 배포라 실패했을 수 있습니다.
